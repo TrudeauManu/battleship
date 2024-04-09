@@ -10,10 +10,12 @@ Route::get('/user', function (Request $request) {
 
 Route::prefix('parties')
     ->controller(PartieController::class)
+    ->middleware(['auth:sanctum'])
     ->group(function () {
-        Route::get('/', 'index');
-        Route::get('/{partie}', 'show');
+        Route::get('/', 'index'); // A enlever
+        Route::get('/{partie}', 'show'); // A enlever
         Route::post('/', 'store');
-        Route::put('/{partie}', 'update');
         Route::delete('/{partie}', 'destroy');
+        Route::post('/{partie}/missiles', 'shoot');
+        Route::put('/{partie}/missiles/{coordonnee}', 'updateMissile');
     });

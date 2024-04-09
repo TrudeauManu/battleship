@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\MissileRequest;
 use App\Http\Requests\PartieRequest;
+use App\Http\Resources\MissileResource;
 use App\Http\Resources\PartieCollection;
 use App\Http\Resources\PartieResource;
+use App\Models\Bateau;
+use App\Models\Coordonnee;
+use App\Models\Missile;
 use App\Models\Partie;
 use Illuminate\Http\Request;
 
@@ -25,7 +30,24 @@ class PartieController extends Controller
      */
     public function store(PartieRequest $request): PartieResource
     {
+        $bateaux = [
+            'porte-avions' => ["A-1", "A-2", "A-3", "A-4", "A-5"],
+            'cuirasse' => ["B-1", "B-2", "B-3", "B-4"],
+            'destroyer' => ["C-1", "C-2", "C-3"],
+            'sous-marin' => ["D-1", "D-2", "D-3"],
+            'patrouilleur' => ["E-1", "E-2"]
+        ];
+
         $partie = Partie::create($request->validated());
+
+        foreach ($bateaux as $nom => $positions) {
+            $boat = new Bateau();
+            $boat->partie_id = $partie->id;
+            $boat->nom = $nom;
+            $boat->positions = json_encode($positions);
+            $boat->save();
+        }
+
         return new PartieResource($partie);
     }
 
@@ -41,10 +63,28 @@ class PartieController extends Controller
 
     /**
      * Remove the specified resource from storage.
+     *
+     * TODO: Soft delete si on implemente un apprentissage
      */
     public function destroy(Partie $partie): PartieResource
     {
         $partie->delete();
         return new PartieResource($partie);
+    }
+
+    public function shoot(MissileRequest $request, Partie $partie): MissileResource
+    {
+        $missile = (new Missile())->createMissile($partie);
+        return new MissileResource($missile);
+    }
+
+    public function updateMissile(MissileRequest $request, Partie $partie, string $coordonnee): MissileResource
+    {
+        $missile = Missile::where('coordonnee', $coordonnee)->firstOrFail();
+
+        $missile->resultat = $request->resultat;
+        $missile->save();
+
+        return new MissileResource($missile);
     }
 }

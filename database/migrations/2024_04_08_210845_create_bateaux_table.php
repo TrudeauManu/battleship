@@ -11,11 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('missiles', function (Blueprint $table) {
+        Schema::create('bateaux', function (Blueprint $table) {
             $table->id();
-            $table->string('coordonnee', 4)->unique();
-            $table->integer('resultat')->nullable();
+            $table->string('nom');
+            $table->string('positions');
+            $table->unsignedBigInteger('partie_id');
             $table->timestamps();
+
+            $table->foreign('partie_id')->references('id')->on('parties')->onDelete('cascade');
         });
     }
 
@@ -24,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('missiles');
+        Schema::dropIfExists('bateaux');
     }
 };
