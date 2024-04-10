@@ -8,7 +8,7 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::prefix('battleship-ai/parties')
+Route::prefix('parties')
     ->controller(PartieController::class)
     ->middleware(['auth:sanctum'])
     ->group(function () {
