@@ -2,11 +2,11 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Bateau;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Log;
 
-class PartieResource extends JsonResource
+class BateauResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,11 +15,10 @@ class PartieResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        // TODO: reformate response
         return [
-            'id' => $this->id,
-            'adversaire' => $this->adversaire,
-            //'bateaux' =>  BateauResource::collection($this->bateaux)
+            'test' => $this['id']
         ];
+
+        return parent::toArray($request);
     }
 }
