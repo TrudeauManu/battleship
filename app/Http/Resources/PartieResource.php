@@ -14,6 +14,7 @@ class PartieResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        // TODO: reformate response
         return parent::toArray($request);
     }
 }
