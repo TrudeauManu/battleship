@@ -19,3 +19,5 @@ Route::prefix('parties')
         Route::post('/{partie}/missiles', 'shoot');
         Route::put('/{partie}/missiles/{coordonnee}', 'updateMissile');
     });
+
+
