@@ -16,9 +16,7 @@ class BateauResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'test' => $this['id']
+            $this['nom'] => json_decode($this['positions'])
         ];
-
-        return parent::toArray($request);
     }
 }

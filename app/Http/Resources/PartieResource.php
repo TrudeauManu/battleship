@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use App\Models\Bateau;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class PartieResource extends JsonResource
 {
@@ -19,7 +20,8 @@ class PartieResource extends JsonResource
         return [
             'id' => $this->id,
             'adversaire' => $this->adversaire,
-            //'bateaux' =>  BateauResource::collection($this->bateaux)
+            'bateaux' =>  BateauResource::collection($this->bateaux),
+            'created_at' => $this->created_at
         ];
     }
 }
