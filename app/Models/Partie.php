@@ -11,8 +11,6 @@ class Partie extends Model
     use HasFactory;
     protected $fillable = ['adversaire'];
 
-    protected $appends = ['bateaux'];
-
     public function missiles(): HasMany
     {
         return $this->hasMany(Missile::class);
