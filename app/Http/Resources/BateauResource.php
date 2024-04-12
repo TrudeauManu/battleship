@@ -4,7 +4,6 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Log;
 
 class BateauResource extends JsonResource
 {
@@ -16,7 +15,11 @@ class BateauResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            $this['nom'] => json_decode($this['positions'])
+            'porte-avions' => json_decode($this->positions_porte_avions),
+            'cuirasse' => json_decode($this->positions_cuirasse),
+            'destroyer' => json_decode($this->positions_destroyer),
+            'sous-marin' => json_decode($this->positions_sous_marin),
+            'patrouilleur' => json_decode($this->positions_patrouilleur),
         ];
     }
 }

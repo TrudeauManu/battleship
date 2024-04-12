@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Partie extends Model
 {
@@ -16,13 +17,8 @@ class Partie extends Model
         return $this->hasMany(Missile::class);
     }
 
-    public function getBateauxAttribute(): array
+    public function bateaux(): HasOne
     {
-        return $this->bateaux()->get()->toArray();
-    }
-
-    public function bateaux(): HasMany
-    {
-        return $this->hasMany(Bateau::class);
+        return $this->hasOne(Bateau::class);
     }
 }

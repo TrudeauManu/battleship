@@ -13,8 +13,11 @@ return new class extends Migration
     {
         Schema::create('bateaux', function (Blueprint $table) {
             $table->id();
-            $table->string('nom');
-            $table->string('positions');
+            $table->string('positions_porte_avions');
+            $table->string('positions_cuirasse');
+            $table->string('positions_destroyer');
+            $table->string('positions_sous_marin');
+            $table->string('positions_patrouilleur');
             $table->unsignedBigInteger('partie_id');
             $table->timestamps();
 

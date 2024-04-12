@@ -40,13 +40,14 @@ class PartieController extends Controller
 
         $partie = Partie::create($request->validated());
 
-        foreach ($bateaux as $nom => $positions) {
-            $boat = new Bateau();
-            $boat->partie_id = $partie->id;
-            $boat->nom = $nom;
-            $boat->positions = json_encode($positions);
-            $boat->save();
-        }
+        $setBateaux = new Bateau();
+        $setBateaux->positions_porte_avions = json_encode($bateaux['porte-avions']);
+        $setBateaux->positions_cuirasse = json_encode($bateaux['cuirasse']);
+        $setBateaux->positions_destroyer = json_encode($bateaux['destroyer']);
+        $setBateaux->positions_sous_marin = json_encode($bateaux['sous-marin']);
+        $setBateaux->positions_patrouilleur = json_encode($bateaux['patrouilleur']);
+        $setBateaux->partie_id = $partie->id;
+        $setBateaux->save();
 
         return new PartieResource($partie);
     }

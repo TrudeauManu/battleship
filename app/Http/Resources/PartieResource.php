@@ -16,11 +16,10 @@ class PartieResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        // TODO: reformate response
         return [
             'id' => $this->id,
             'adversaire' => $this->adversaire,
-            'bateaux' =>  BateauResource::collection($this->bateaux),
+            'bateaux' => BateauResource::make($this->bateaux),
             'created_at' => $this->created_at
         ];
     }
