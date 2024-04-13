@@ -232,7 +232,7 @@ class BattleshipTest extends TestCase
                 $json->whereAllType([
                         'data.id' => 'integer',
                         'data.adversaire' => 'string',
-                        'data.bateaux.cuirasser' => 'array',
+                        'data.bateaux.cuirasse' => 'array',
                         'data.bateaux.destroyer' => 'array',
                         'data.bateaux.sous-marin' => 'array',
                         'data.bateaux.patrouilleur' => 'array',

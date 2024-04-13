@@ -40,7 +40,6 @@ class PartieController extends Controller
 
         $partie = new Partie();
         $partie->adversaire = $request->validated()['adversaire'];
-        $partie->user_id = $request->user()->id;
         $partie->est_tour = true;
         $partie->save();
 
