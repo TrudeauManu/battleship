@@ -22,7 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (NotFoundHttpException $e, Request $request) {
             if ($request->is('battleship-ia/*')) {
                 return response()->json([
-                    'message' => 'La ressource n\'existe pas.'
+                    'message' => 'La ressource n’existe pas.'
                 ], 404);
             }
         });
