@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('missiles', function (Blueprint $table) {
             $table->id();
-            $table->string('coordonnee', 4)->unique();
+            $table->string('coordonnee', 4);
             $table->integer('resultat')->nullable();
             $table->timestamps();
         });

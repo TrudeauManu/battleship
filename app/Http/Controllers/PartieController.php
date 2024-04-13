@@ -8,10 +8,10 @@ use App\Http\Resources\MissileResource;
 use App\Http\Resources\PartieCollection;
 use App\Http\Resources\PartieResource;
 use App\Models\Bateau;
-use App\Models\Coordonnee;
 use App\Models\Missile;
 use App\Models\Partie;
-use Illuminate\Http\Request;
+use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Facades\Gate;
 
 class PartieController extends Controller
 {
@@ -38,7 +38,11 @@ class PartieController extends Controller
             'patrouilleur' => ["E-1", "E-2"]
         ];
 
-        $partie = Partie::create($request->validated());
+        $partie = new Partie();
+        $partie->adversaire = $request->validated()['adversaire'];
+        $partie->user_id = $request->user()->id;
+        $partie->est_tour = true;
+        $partie->save();
 
         $setBateaux = new Bateau();
         $setBateaux->positions_porte_avions = json_encode($bateaux['porte-avions']);
@@ -69,22 +73,40 @@ class PartieController extends Controller
      */
     public function destroy(Partie $partie): PartieResource
     {
+        //Gate::denyIf()
         $partie->delete();
         return new PartieResource($partie);
     }
 
+
     public function shoot(MissileRequest $request, Partie $partie): MissileResource
     {
+        Gate::denyIf(!$partie->est_tour, 'Cette action n’est pas autorisée.');
+
+        $partie->est_tour = false;
+        $partie->save();
+
         $missile = (new Missile())->createMissile($partie);
+
         return new MissileResource($missile);
     }
 
     public function updateMissile(MissileRequest $request, Partie $partie, string $coordonnee): MissileResource
     {
+        Gate::denyIf($partie->est_tour, 'Cette action n’est pas autorisée.');
+
+        $request->validate([
+            'resultat' => 'required'
+        ]);
+        $attibutes = $request->validated();
+
         $missile = Missile::where('coordonnee', $coordonnee)->firstOrFail();
 
-        $missile->resultat = $request->resultat;
+        $missile->resultat = $attibutes['resultat'];
         $missile->save();
+
+        $partie->est_tour = true;
+        $partie->save();
 
         return new MissileResource($missile);
     }
