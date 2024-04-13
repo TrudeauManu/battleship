@@ -10,7 +10,7 @@ use App\Http\Resources\PartieResource;
 use App\Models\Bateau;
 use App\Models\Missile;
 use App\Models\Partie;
-use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class PartieController extends Controller
@@ -40,7 +40,7 @@ class PartieController extends Controller
 
         $partie = new Partie();
         $partie->adversaire = $request->validated()['adversaire'];
-        $partie->est_tour = true;
+        $partie->user_id = auth()->user()->id;
         $partie->save();
 
         $setBateaux = new Bateau();
@@ -67,22 +67,20 @@ class PartieController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     *
-     * TODO: Soft delete si on implemente un apprentissage
      */
     public function destroy(Partie $partie): PartieResource
     {
-        //Gate::denyIf()
+        Gate::denyIf($partie->user_id !== Auth::id(), 'Cette action n’est pas autorisée.');
+
+        $bateaux = $partie->bateaux;
         $partie->delete();
+        $partie->bateaux = $bateaux;
         return new PartieResource($partie);
     }
 
     public function shoot(MissileRequest $request, Partie $partie): MissileResource
     {
-        Gate::denyIf(!$partie->est_tour, 'Cette action n’est pas autorisée.');
-
-        $partie->est_tour = false;
-        $partie->save();
+        Gate::denyIf($partie->user_id !== Auth::id(), 'Cette action n’est pas autorisée.');
 
         $missile = (new Missile())->createMissile($partie);
 
@@ -91,20 +89,18 @@ class PartieController extends Controller
 
     public function updateMissile(MissileRequest $request, Partie $partie, string $coordonnee): MissileResource
     {
-        Gate::denyIf($partie->est_tour, 'Cette action n’est pas autorisée.');
+        $missile = Missile::where('coordonnee', $coordonnee)->firstOrFail();
+
+        Gate::denyIf($partie->user_id !== Auth::id(), 'Cette action n’est pas autorisée.');
 
         $request->validate([
             'resultat' => 'required'
         ]);
-        $attibutes = $request->validated();
 
-        $missile = Missile::where('coordonnee', $coordonnee)->firstOrFail();
+        $attibutes = $request->validated();
 
         $missile->resultat = $attibutes['resultat'];
         $missile->save();
-
-        $partie->est_tour = true;
-        $partie->save();
 
         return new MissileResource($missile);
     }

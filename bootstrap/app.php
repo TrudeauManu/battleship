@@ -34,12 +34,4 @@ return Application::configure(basePath: dirname(__DIR__))
                 ], 401);
             }
         });
-
-        $exceptions->render(function (AuthorizationException $e, Request $request) {
-            if ($request->is('battleship-ia/*')) {
-                return response()->json([
-                    'message' => 'Cette action n’est pas autorisée.'
-                ], 403);
-            }
-        });
     })->create();

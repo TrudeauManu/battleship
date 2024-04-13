@@ -2,10 +2,8 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Bateau;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class PartieResource extends JsonResource
 {
@@ -19,7 +17,13 @@ class PartieResource extends JsonResource
         return [
             'id' => $this->id,
             'adversaire' => $this->adversaire,
-            'bateaux' => BateauResource::make($this->bateaux),
+            'bateaux' => [
+                'porte-avions' => json_decode($this->bateaux->positions_porte_avions),
+                'cuirasse' => json_decode($this->bateaux->positions_cuirasse),
+                'destroyer' => json_decode($this->bateaux->positions_destroyer),
+                'sous-marin' => json_decode($this->bateaux->positions_sous_marin),
+                'patrouilleur' => json_decode($this->bateaux->positions_patrouilleur),
+            ],
             'created_at' => $this->created_at
         ];
     }
