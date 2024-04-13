@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -16,22 +17,29 @@ return Application::configure(basePath: dirname(__DIR__))
         apiPrefix: 'battleship-ia',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (NotFoundHttpException $e, Request $request) {
             if ($request->is('battleship-ia/*')) {
                 return response()->json([
-                    'message' => 'La ressource n\'existe pas.'
+                    'message' => 'La ressource n’existe pas.'
                 ], 404);
             }
         });
 
         $exceptions->render(function (AuthenticationException $e, Request $request) {
-            if ($request->is('battleship-ia/parties')) {
+            if ($request->is('battleship-ia/*')) {
                 return response()->json([
                     'message' => 'Non authentifié.'
                 ], 401);
+            }
+        });
+
+        $exceptions->render(function (AuthorizationException $e, Request $request) {
+            if ($request->is('battleship-ia/*')) {
+                return response()->json([
+                    'message' => 'Cette action n’est pas autorisée.'
+                ], 403);
             }
         });
     })->create();
