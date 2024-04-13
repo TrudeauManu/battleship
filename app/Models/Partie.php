@@ -22,9 +22,4 @@ class Partie extends Model
     {
         return $this->hasOne(Bateau::class);
     }
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
 }

@@ -78,7 +78,6 @@ class PartieController extends Controller
         return new PartieResource($partie);
     }
 
-
     public function shoot(MissileRequest $request, Partie $partie): MissileResource
     {
         Gate::denyIf(!$partie->est_tour, 'Cette action n’est pas autorisée.');

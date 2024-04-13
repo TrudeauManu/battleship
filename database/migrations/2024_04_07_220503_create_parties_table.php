@@ -14,11 +14,8 @@ return new class extends Migration
         Schema::create('parties', function (Blueprint $table) {
             $table->id();
             $table->string('adversaire');
-            $table->unsignedBigInteger('user_id');
             $table->boolean('est_tour')->default(true);
             $table->timestamps();
-
-            $table->foreign('user_id')->references('id')->on('users');
         });
     }
 
