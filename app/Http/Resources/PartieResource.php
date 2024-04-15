@@ -17,13 +17,7 @@ class PartieResource extends JsonResource
         return [
             'id' => $this->id,
             'adversaire' => $this->adversaire,
-            'bateaux' => [
-                'porte-avions' => json_decode($this->bateaux->positions_porte_avions),
-                'cuirasse' => json_decode($this->bateaux->positions_cuirasse),
-                'destroyer' => json_decode($this->bateaux->positions_destroyer),
-                'sous-marin' => json_decode($this->bateaux->positions_sous_marin),
-                'patrouilleur' => json_decode($this->bateaux->positions_patrouilleur),
-            ],
+            'bateaux' => BateauResource::make($this->bateaux),
             'created_at' => $this->created_at
         ];
     }
