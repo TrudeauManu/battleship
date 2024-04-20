@@ -27,25 +27,18 @@ class PartieController extends Controller
      */
     public function store(PartieRequest $request): PartieResource
     {
-        $bateaux = [
-            'porte-avions' => ["A-1", "A-2", "A-3", "A-4", "A-5"],
-            'cuirasse' => ["B-1", "B-2", "B-3", "B-4"],
-            'destroyer' => ["C-1", "C-2", "C-3"],
-            'sous-marin' => ["D-1", "D-2", "D-3"],
-            'patrouilleur' => ["E-1", "E-2"]
-        ];
-
         $partie = new Partie();
         $partie->adversaire = $request->validated()['adversaire'];
         $partie->user_id = auth()->user()->id;
         $partie->save();
 
         $setBateaux = new Bateau();
-        $setBateaux->positions_porte_avions = json_encode($bateaux['porte-avions']);
-        $setBateaux->positions_cuirasse = json_encode($bateaux['cuirasse']);
-        $setBateaux->positions_destroyer = json_encode($bateaux['destroyer']);
-        $setBateaux->positions_sous_marin = json_encode($bateaux['sous-marin']);
-        $setBateaux->positions_patrouilleur = json_encode($bateaux['patrouilleur']);
+        $bateaux = $setBateaux->placerBateaux();
+        $setBateaux->positions_porte_avions = $bateaux['porte-avions'];
+        $setBateaux->positions_cuirasse = $bateaux['cuirasse'];
+        $setBateaux->positions_destroyer = $bateaux['destroyer'];
+        $setBateaux->positions_sous_marin = $bateaux['sous-marin'];
+        $setBateaux->positions_patrouilleur = $bateaux['patrouilleur'];
         $setBateaux->partie_id = $partie->id;
         $setBateaux->save();
 

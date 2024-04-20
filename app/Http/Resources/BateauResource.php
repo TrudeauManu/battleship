@@ -15,11 +15,11 @@ class BateauResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'porte-avions' => json_decode($this->positions_porte_avions),
-            'cuirasse' => json_decode($this->positions_cuirasse),
-            'destroyer' => json_decode($this->positions_destroyer),
-            'sous-marin' => json_decode($this->positions_sous_marin),
-            'patrouilleur' => json_decode($this->positions_patrouilleur),
+            'porte-avions' => $this->positions_porte_avions,
+            'cuirasse' => $this->positions_cuirasse,
+            'destroyer' => $this->positions_destroyer,
+            'sous-marin' => $this->positions_sous_marin,
+            'patrouilleur' => $this->positions_patrouilleur,
         ];
     }
 }
