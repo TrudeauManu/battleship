@@ -52,8 +52,8 @@ class Bateau extends Model
 
         foreach ($BATEAUX_LONGUEUR as $bateau => $longueur) {
             $placer = false;
+            $estHorizontal = rand(0,1);
             while (!$placer) {
-                $estHorizontal = rand(0,1);
                 if ($estHorizontal) {
                     $row = rand(0, $TAILLE_TABLEAU - 1);
                     $col = rand(0, $TAILLE_TABLEAU - $longueur);
@@ -79,13 +79,17 @@ class Bateau extends Model
             if ($estHorizontal) {
                 if($tableau[$row][$col + $i] === 1 ||
                     ($row > 0 && $tableau[$row - 1][$col + $i] === 1) ||
-                    ($row < count($tableau) - 1 && $tableau[$row + 1][$col + $i] === 1)) {
+                    ($row < count($tableau) - 1 && $tableau[$row + 1][$col + $i] === 1) ||
+                    ($col + $i > 0 && $tableau[$row][$col + $i - 1] === 1) ||
+                    ($col + $i < count($tableau[0]) - 1 && $tableau[$row][$col + $i + 1] === 1)) {
                     return true;
                 }
             } else {
                 if ($tableau[$row + $i][$col] === 1 ||
                     ($col > 0 && $tableau[$row + $i][$col - 1] === 1) ||
-                    ($col < count($tableau[0]) - 1 && $tableau[$row + $i][$col + 1] === 1)) {
+                    ($col < count($tableau[0]) - 1 && $tableau[$row + $i][$col + 1] === 1) ||
+                    ($row + $i > 0 && $tableau[$row + $i - 1][$col] === 1) ||
+                    ($row + $i < count($tableau) - 1 && $tableau[$row + $i + 1][$col] === 1)) {
                     return true;
                 }
             }
