@@ -15,7 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('coordonnee', 4);
             $table->integer('resultat')->nullable();
+            $table->unsignedBigInteger('partie_id');
             $table->timestamps();
+
+            $table->foreign('partie_id')->references('id')->on('parties')->onDelete('cascade');
         });
     }
 
