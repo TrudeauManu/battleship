@@ -20,7 +20,7 @@ class Missile extends Model
 
     public function createMissile(Partie $partie): Missile
     {
-        $coordonnee = $this->calculateProbabilityMap();
+        $coordonnee = $this->calculateProbabilityMap($partie);
 
         $missile = new Missile();
         $missile->coordonnee = $coordonnee;
@@ -31,7 +31,7 @@ class Missile extends Model
         return $missile;
     }
 
-    private function calculateProbabilityMap(): string
+    private function calculateProbabilityMap(Partie $partie): string
     {
         $TAILLE_TABLEAU = 10;
 
@@ -49,11 +49,13 @@ class Missile extends Model
         // TODO: Regarder missiles et updater le tableau avec miss et hit et couler
         $tableProbabilite[5][5] = -1;
         $tableProbabilite[4][4] = -1;
+        $this->updateTableProbabiliteEtBateaux($bateaux, $tableProbabilite, $partie);
 
         $this->monteCarlo($tableProbabilite, $bateaux, $TAILLE_TABLEAU, 100000);
 
         // TODO: A desactiver si bateaux couler?
         $this->boostProbabiliteAdjacentHit($tableProbabilite, $TAILLE_TABLEAU);
+        //dd($tableProbabilite);
 
         return $this->trouverPlusProbable($tableProbabilite, $TAILLE_TABLEAU);
     }
@@ -102,10 +104,10 @@ class Missile extends Model
         for ($i = 0; $i < $taille_tableau; $i++) {
             for ($j = 0; $j < $taille_tableau; $j++) {
                 if ($tableProbabilite[$i][$j] === -2) {
-                    $tableProbabilite[$i + 1][$j] *= 2;
-                    $tableProbabilite[$i][$j + 1] *= 2;
-                    $tableProbabilite[$i - 1][$j] *= 2;
-                    $tableProbabilite[$i][$j - 1] *= 2;
+                    $tableProbabilite[$i + 1][$j] *= 2.5;
+                    $tableProbabilite[$i][$j + 1] *= 2.5;
+                    $tableProbabilite[$i - 1][$j] *= 2.5;
+                    $tableProbabilite[$i][$j - 1] *= 2.5;
                 }
             }
         }
@@ -131,5 +133,48 @@ class Missile extends Model
             }
         }
         return chr(65 + $row) . "-" . ($col + 1);
+    }
+
+    function updateTableProbabiliteEtBateaux(array &$bateaux, array &$tableProbabilite, Partie $partie): void
+    {
+        $missilesLancer = $partie->missiles()->get()->toArray();
+
+        for ($i = 0; $i < count($missilesLancer); $i++) {
+            $resultat = $missilesLancer[$i]['resultat'];
+            $indexes = $this->convertCoordonneesToIndex($missilesLancer[$i]['coordonnee']);
+            $row = $indexes['row'];
+            $col = $indexes['col'];
+
+            switch ($resultat) {
+                case 0:
+                    $tableProbabilite[$row][$col] = -1;
+                    break;
+                case 1:
+                    $tableProbabilite[$row][$col] = -2;
+                    break;
+                case 2:
+                    unset($bateaux['porte-avions']);
+                    break;
+                case 3:
+                    unset($bateaux['cuirasse']);
+                    break;
+                case 4:
+                    unset($bateaux['destroyer']);
+                    break;
+                case 5:
+                    unset($bateaux['sous-marin']);
+                    break;
+                case 6:
+                    unset($bateaux['patrouilleur']);
+                    break;
+            }
+        }
+    }
+
+    function convertCoordonneesToIndex(string $coordonnee): array {
+        $lettre = substr($coordonnee, 0, 1);
+        $row = ord($lettre) - ord('A');
+        $col = intval(substr($coordonnee, 2)) - 1;
+        return ['row' => $row, 'col' => $col];
     }
 }
