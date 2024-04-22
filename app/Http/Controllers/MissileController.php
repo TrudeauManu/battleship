@@ -23,7 +23,9 @@ class MissileController extends Controller
 
     public function updateMissile(MissileRequest $request, Partie $partie, string $coordonnee): MissileResource
     {
-        $missile = Missile::where('coordonnee', $coordonnee)->firstOrFail();
+        $missile = Missile::where([
+            ['coordonnee', $coordonnee],
+            ['partie_id', $partie->id]])->firstOrFail();
 
         Gate::denyIf($partie->user_id !== Auth::id(), 'Cette action n’est pas autorisée.');
 
