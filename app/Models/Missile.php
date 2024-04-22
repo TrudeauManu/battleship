@@ -47,13 +47,8 @@ class Missile extends Model
         ];
 
         $this->updateTableProbabiliteEtBateaux($bateaux, $tableProbabilite, $partie);
-//        $tableProbabilite[5][5] = -1;
-//        $tableProbabilite[4][4] = -1;
-//        $tableProbabilite[3][3] = -1;
-//        $tableProbabilite[2][6] = -2;
 
-        $nb = 0;
-        $this->calculateBateauxConfigurations($tableProbabilite, $bateaux, $TAILLE_TABLEAU,  $nb);
+        $this->calculateBateauxConfigurations($tableProbabilite, $bateaux, $TAILLE_TABLEAU);
 
         // TODO: A desactiver si bateaux couler?
         $this->boostProbabiliteAdjacentHit($tableProbabilite, $TAILLE_TABLEAU);
@@ -61,16 +56,13 @@ class Missile extends Model
         return $this->trouverPlusProbable($tableProbabilite, $TAILLE_TABLEAU);
     }
 
-    private function calculateBateauxConfigurations(array &$tableProbabilite, array $bateaux, int $taille_tableau, int &$nbBateauxPlaces): void
+    private function calculateBateauxConfigurations(array &$tableProbabilite, array $bateaux, int $taille_tableau): void
     {
-        $nbBateauxPlaces = 0;
-
         foreach ($bateaux as $bateau => $longueur) {
             for ($i = 0; $i < $taille_tableau; $i++) {
                 for ($j = 0; $j < $taille_tableau; $j++) {
                     for ($estHorizontal = 0; $estHorizontal < 2; $estHorizontal++) {
                         if ($this->placable($i, $j, $longueur, $estHorizontal, $tableProbabilite)) {
-                            $nbBateauxPlaces++;
                             $boost = $this->overlappedHit($i, $j, $longueur, $estHorizontal, $tableProbabilite);
                             for ($k = 0; $k < $longueur; $k++) {
                                 // TODO Ya un stupid bug.. rajoute + 1 une fois random
@@ -101,13 +93,14 @@ class Missile extends Model
 
     private function overlappedHit(int $row, int $col, int $longueur, bool $estHorizontal, array $tableProbabilite): int
     {
+        $boost = 1;
         for ($i = 0; $i < $longueur; $i++) {
             if ($estHorizontal && $tableProbabilite[$row][$col + $i] === -2)
-                return 3;
+                $boost += 2;
             if (!$estHorizontal && $tableProbabilite[$row + $i][$col] === -2)
-                return 3;
+                $boost += 2;
         }
-        return 1;
+        return $boost;
     }
 
     private function boostProbabiliteAdjacentHit(array &$tableProbabilite, int $taille_tableau): void
@@ -164,18 +157,23 @@ class Missile extends Model
                     break;
                 case 2:
                     unset($bateaux['porte-avions']);
+                    $this->trouverPositionsBateauxEtMettreMiss($row, $col, 5);
                     break;
                 case 3:
                     unset($bateaux['cuirasse']);
+                    $this->trouverPositionsBateauxEtMettreMiss($row, $col, 4);
                     break;
                 case 4:
                     unset($bateaux['destroyer']);
+                    $this->trouverPositionsBateauxEtMettreMiss($row, $col, 3);
                     break;
                 case 5:
                     unset($bateaux['sous-marin']);
+                    $this->trouverPositionsBateauxEtMettreMiss($row, $col, 3);
                     break;
                 case 6:
                     unset($bateaux['patrouilleur']);
+                    $this->trouverPositionsBateauxEtMettreMiss($row, $col, 2);
                     break;
                 case -1:
                     break;
@@ -189,5 +187,13 @@ class Missile extends Model
         $row = ord($lettre) - ord('A');
         $col = intval(substr($coordonnee, 2)) - 1;
         return ['row' => $row, 'col' => $col];
+    }
+
+    private function trouverPositionsBateauxEtMettreMiss(int $row, int $col, int $longueur): void {
+        for ($i = 0; $i < 4; $i++) {
+            for ($j = 0; $j < $longueur; $j++) {
+
+            }
+        }
     }
 }
