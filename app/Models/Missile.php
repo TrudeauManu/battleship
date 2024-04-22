@@ -37,7 +37,6 @@ class Missile extends Model
 
         $tableProbabilite = array_fill(0, $TAILLE_TABLEAU, array_fill(0, $TAILLE_TABLEAU, 0));
 
-        // TODO: doit etre reactif avec le board ennemi.
         $bateaux = [
             'porte-avions' => 5,
             'cuirasse' => 4,
@@ -46,16 +45,15 @@ class Missile extends Model
             'patrouilleur' => 2
         ];
 
-        // TODO: Regarder missiles et updater le tableau avec miss et hit et couler
-        $tableProbabilite[5][5] = -1;
-        $tableProbabilite[4][4] = -1;
         $this->updateTableProbabiliteEtBateaux($bateaux, $tableProbabilite, $partie);
+        $dernierMissileATouche = $partie->missiles()->latest()['resultat'] === 1;
 
-        $this->monteCarlo($tableProbabilite, $bateaux, $TAILLE_TABLEAU, 100000);
+        $this->monteCarlo($tableProbabilite, $bateaux, $TAILLE_TABLEAU, $dernierMissileATouche, 100000);
 
         // TODO: A desactiver si bateaux couler?
         $this->boostProbabiliteAdjacentHit($tableProbabilite, $TAILLE_TABLEAU);
-        //dd($tableProbabilite);
+        dd($tableProbabilite);
+
 
         return $this->trouverPlusProbable($tableProbabilite, $TAILLE_TABLEAU);
     }
@@ -86,7 +84,7 @@ class Missile extends Model
         }
     }
 
-    function overlapped(array $tableau, int $row, int $col, int $longueur, bool $estHorizontal, array $tableProbabilite): bool {
+    private function overlapped(array $tableau, int $row, int $col, int $longueur, bool $estHorizontal, array $tableProbabilite): bool {
         for ($i = 0; $i < $longueur; $i++) {
             if ($estHorizontal && $tableProbabilite[$row][$col + $i] === -1)
                 return true;
@@ -100,26 +98,26 @@ class Missile extends Model
         return false;
     }
 
-    function boostProbabiliteAdjacentHit($tableProbabilite, int $taille_tableau): void {
+    private function boostProbabiliteAdjacentHit($tableProbabilite, int $taille_tableau): void {
         for ($i = 0; $i < $taille_tableau; $i++) {
             for ($j = 0; $j < $taille_tableau; $j++) {
                 if ($tableProbabilite[$i][$j] === -2) {
-                    $tableProbabilite[$i + 1][$j] *= 2.5;
-                    $tableProbabilite[$i][$j + 1] *= 2.5;
-                    $tableProbabilite[$i - 1][$j] *= 2.5;
-                    $tableProbabilite[$i][$j - 1] *= 2.5;
+                    $tableProbabilite[$i + 1][$j] *= 3;
+                    $tableProbabilite[$i][$j + 1] *= 3;
+                    $tableProbabilite[$i - 1][$j] *= 3;
+                    $tableProbabilite[$i][$j - 1] *= 3;
                 }
             }
         }
     }
 
-    function monteCarlo(array &$tableProbabilite, array $bateaux, int $taille_tableau, int $nb_iteration): void {
+    private function monteCarlo(array &$tableProbabilite, array $bateaux, int $taille_tableau, bool $dernierMissileEstHit, int $nb_iteration): void {
         for ($i = 0; $i < $nb_iteration; $i++) {
             $this->calculateBateauxConfigurations($tableProbabilite, $bateaux, $taille_tableau);
         }
     }
 
-    function trouverPlusProbable(array $tableProbabilite, int $taille_tableau): string {
+    private function trouverPlusProbable(array $tableProbabilite, int $taille_tableau): string {
         $plusProbable = 0;
         $row = 0;
         $col = 0;
@@ -135,7 +133,7 @@ class Missile extends Model
         return chr(65 + $row) . "-" . ($col + 1);
     }
 
-    function updateTableProbabiliteEtBateaux(array &$bateaux, array &$tableProbabilite, Partie $partie): void
+    private function updateTableProbabiliteEtBateaux(array &$bateaux, array &$tableProbabilite, Partie $partie): void
     {
         $missilesLancer = $partie->missiles()->get()->toArray();
 
@@ -144,6 +142,7 @@ class Missile extends Model
             $indexes = $this->convertCoordonneesToIndex($missilesLancer[$i]['coordonnee']);
             $row = $indexes['row'];
             $col = $indexes['col'];
+            $resultat = $resultat === null ? -1 : $resultat;
 
             switch ($resultat) {
                 case 0:
@@ -167,11 +166,13 @@ class Missile extends Model
                 case 6:
                     unset($bateaux['patrouilleur']);
                     break;
+                case -1:
+                    break;
             }
         }
     }
 
-    function convertCoordonneesToIndex(string $coordonnee): array {
+    private function convertCoordonneesToIndex(string $coordonnee): array {
         $lettre = substr($coordonnee, 0, 1);
         $row = ord($lettre) - ord('A');
         $col = intval(substr($coordonnee, 2)) - 1;
