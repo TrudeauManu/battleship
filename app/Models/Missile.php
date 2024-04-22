@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Log;
 class Missile extends Model
 {
     use HasFactory;
+
     protected $fillable = ['resultat'];
 
     public function partie(): BelongsTo
@@ -45,79 +46,100 @@ class Missile extends Model
             'patrouilleur' => 2
         ];
 
-        $this->updateTableProbabiliteEtBateaux($bateaux, $tableProbabilite, $partie);
-        $dernierMissileATouche = $partie->missiles()->latest()['resultat'] === 1;
+        //$this->updateTableProbabiliteEtBateaux($bateaux, $tableProbabilite, $partie);
+        $tableProbabilite[5][5] = -1;
+        $tableProbabilite[4][4] = -1;
+        $tableProbabilite[3][3] = -1;
+        $tableProbabilite[2][6] = -2;
 
-        $this->monteCarlo($tableProbabilite, $bateaux, $TAILLE_TABLEAU, $dernierMissileATouche, 100000);
+        // $this->monteCarlo($tableProbabilite, $bateaux, $TAILLE_TABLEAU, 100000);
+        $nb = 0;
+        $this->calculateBateauxConfigurations($tableProbabilite, $bateaux, $TAILLE_TABLEAU,  $nb);
 
         // TODO: A desactiver si bateaux couler?
         $this->boostProbabiliteAdjacentHit($tableProbabilite, $TAILLE_TABLEAU);
-        dd($tableProbabilite);
+
 
 
         return $this->trouverPlusProbable($tableProbabilite, $TAILLE_TABLEAU);
     }
 
-    private function calculateBateauxConfigurations(array &$tableProbabilite, array $bateaux, int $taille_tableau): void
+    private function calculateBateauxConfigurations(array &$tableProbabilite, array $bateaux, int $taille_tableau, int &$nbBateauxPlaces): void
     {
-        $tableau = array_fill(0, $taille_tableau, array_fill(0, $taille_tableau, 0));
+        $nbBateauxPlaces = 0;
+
         foreach ($bateaux as $bateau => $longueur) {
-            $placer = false;
-            $estHorizontal = rand(0, 1);
-            while (!$placer) {
-                if ($estHorizontal) {
-                    $row = rand(0, $taille_tableau - 1);
-                    $col = rand(0, $taille_tableau - $longueur);
-                } else {
-                    $row = rand(0, $taille_tableau - $longueur);
-                    $col = rand(0, $taille_tableau - 1);
-                }
-                $placer = !$this->overlapped($tableau, $row, $col, $longueur, $estHorizontal, $tableProbabilite);
-                if ($placer) {
-                    for ($i = 0; $i < $longueur; $i++) {
-                        // TODO Ya un stupid bug.. rajoute + 1 une fois random
-                        if ($tableProbabilite[$estHorizontal ? $row : $row + $i][$estHorizontal ? $col + $i : $col] >= 0)
-                            $tableProbabilite[$estHorizontal ? $row : $row + $i][$estHorizontal ? $col + $i : $col] += 1;
+            for ($i = 0; $i < $taille_tableau; $i++) {
+                for ($j = 0; $j < $taille_tableau; $j++) {
+                    for ($estHorizontal = 0; $estHorizontal < 2; $estHorizontal++) {
+                        if ($this->placable( $i, $j, $longueur, $estHorizontal, $tableProbabilite)) {
+                            $nbBateauxPlaces++;
+
+                            for ($k = 0; $k < $longueur; $k++) {
+                                // TODO Ya un stupid bug.. rajoute + 1 une fois random
+                                if ($tableProbabilite[$estHorizontal ? $i : $i + $k][$estHorizontal ? $j + $k : $j] >= 0)
+                                    $tableProbabilite[$estHorizontal ? $i : $i + $k][$estHorizontal ? $j + $k : $j] += 1;
+                            }
+                        };
                     }
                 }
             }
+
+
+//            while (!$placer) {
+//                if ($estHorizontal) {
+//                    $row = rand(0, $taille_tableau - 1);
+//                    $col = rand(0, $taille_tableau - $longueur);
+//                } else {
+//                    $row = rand(0, $taille_tableau - $longueur);
+//                    $col = rand(0, $taille_tableau - 1);
+//                }
+//                $placer = !$this->overlapped($tableau, $row, $col, $longueur, $estHorizontal, $tableProbabilite);
+//                if ($placer) {
+//                    for ($i = 0; $i < $longueur; $i++) {
+//                        // TODO Ya un stupid bug.. rajoute + 1 une fois random
+//                        if ($tableProbabilite[$estHorizontal ? $row : $row + $i][$estHorizontal ? $col + $i : $col] >= 0)
+//                            $tableProbabilite[$estHorizontal ? $row : $row + $i][$estHorizontal ? $col + $i : $col] += 1;
+//                    }
+//                }
+//            }
         }
     }
 
-    private function overlapped(array $tableau, int $row, int $col, int $longueur, bool $estHorizontal, array $tableProbabilite): bool {
+    private function placable(int $row, int $col, int $longueur, bool $estHorizontal, array $tableProbabilite): bool
+    {
         for ($i = 0; $i < $longueur; $i++) {
             if ($estHorizontal && $tableProbabilite[$row][$col + $i] === -1)
-                return true;
+                return false;
             if (!$estHorizontal && $tableProbabilite[$row + $i][$col] === -1)
-                return true;
-            if ($estHorizontal && $tableau[$row][$col + $i] === 1)
-                return true;
-            if (!$estHorizontal && $tableau[$row + $i][$col] === 1)
-                return true;
+                return false;
         }
-        return false;
+        return true;
     }
 
-    private function boostProbabiliteAdjacentHit($tableProbabilite, int $taille_tableau): void {
+    private function boostProbabiliteAdjacentHit(array &$tableProbabilite, int $taille_tableau): void
+    {
         for ($i = 0; $i < $taille_tableau; $i++) {
             for ($j = 0; $j < $taille_tableau; $j++) {
                 if ($tableProbabilite[$i][$j] === -2) {
-                    $tableProbabilite[$i + 1][$j] *= 3;
-                    $tableProbabilite[$i][$j + 1] *= 3;
-                    $tableProbabilite[$i - 1][$j] *= 3;
-                    $tableProbabilite[$i][$j - 1] *= 3;
+                    $tableProbabilite[$i + 1][$j] *= 2;
+                    $tableProbabilite[$i][$j + 1] *= 2;
+                    $tableProbabilite[$i - 1][$j] *= 2;
+                    $tableProbabilite[$i][$j - 1] *= 2;
                 }
             }
         }
     }
 
-    private function monteCarlo(array &$tableProbabilite, array $bateaux, int $taille_tableau, bool $dernierMissileEstHit, int $nb_iteration): void {
+    private function monteCarlo(array &$tableProbabilite, array $bateaux, int $taille_tableau, int $nb_iteration): void
+    {
         for ($i = 0; $i < $nb_iteration; $i++) {
             $this->calculateBateauxConfigurations($tableProbabilite, $bateaux, $taille_tableau);
         }
     }
 
-    private function trouverPlusProbable(array $tableProbabilite, int $taille_tableau): string {
+    private function trouverPlusProbable(array $tableProbabilite, int $taille_tableau): string
+    {
         $plusProbable = 0;
         $row = 0;
         $col = 0;
@@ -172,7 +194,8 @@ class Missile extends Model
         }
     }
 
-    private function convertCoordonneesToIndex(string $coordonnee): array {
+    private function convertCoordonneesToIndex(string $coordonnee): array
+    {
         $lettre = substr($coordonnee, 0, 1);
         $row = ord($lettre) - ord('A');
         $col = intval(substr($coordonnee, 2)) - 1;
