@@ -51,7 +51,7 @@ class Missile extends Model
         $this->calculateBateauxConfigurations($tableProbabilite, $bateaux, $TAILLE_TABLEAU);
 
         // TODO: A desactiver si bateaux couler?
-        $this->boostProbabiliteAdjacentHit($tableProbabilite, $TAILLE_TABLEAU);
+        //$this->boostProbabiliteAdjacentHit($tableProbabilite, $TAILLE_TABLEAU);
 
         return $this->trouverPlusProbable($tableProbabilite, $TAILLE_TABLEAU);
     }
@@ -157,23 +157,28 @@ class Missile extends Model
                     break;
                 case 2:
                     unset($bateaux['porte-avions']);
-                    $this->trouverPositionsBateauxEtMettreMiss($row, $col, 5);
+                    $tableProbabilite[$row][$col] = -2;
+                    $this->trouverPositionsBateauxEtMettreMiss($tableProbabilite, $row, $col, 5);
                     break;
                 case 3:
                     unset($bateaux['cuirasse']);
-                    $this->trouverPositionsBateauxEtMettreMiss($row, $col, 4);
+                    $tableProbabilite[$row][$col] = -2;
+                    $this->trouverPositionsBateauxEtMettreMiss($tableProbabilite, $row, $col, 4);
                     break;
                 case 4:
                     unset($bateaux['destroyer']);
-                    $this->trouverPositionsBateauxEtMettreMiss($row, $col, 3);
+                    $tableProbabilite[$row][$col] = -2;
+                    $this->trouverPositionsBateauxEtMettreMiss($tableProbabilite, $row, $col, 3);
                     break;
                 case 5:
                     unset($bateaux['sous-marin']);
-                    $this->trouverPositionsBateauxEtMettreMiss($row, $col, 3);
+                    $tableProbabilite[$row][$col] = -2;
+                    $this->trouverPositionsBateauxEtMettreMiss($tableProbabilite, $row, $col, 3);
                     break;
                 case 6:
                     unset($bateaux['patrouilleur']);
-                    $this->trouverPositionsBateauxEtMettreMiss($row, $col, 2);
+                    $tableProbabilite[$row][$col] = -2;
+                    $this->trouverPositionsBateauxEtMettreMiss($tableProbabilite, $row, $col, 2);
                     break;
                 case -1:
                     break;
@@ -189,11 +194,33 @@ class Missile extends Model
         return ['row' => $row, 'col' => $col];
     }
 
-    private function trouverPositionsBateauxEtMettreMiss(int $row, int $col, int $longueur): void {
-        for ($i = 0; $i < 4; $i++) {
-            for ($j = 0; $j < $longueur; $j++) {
+    private function trouverPositionsBateauxEtMettreMiss(array &$tableProbabilite, int $row, int $col, int $longueur): void {
+        $directions = [[-1, 0], [1, 0], [0, -1], [0, 1]];
 
+        foreach ($directions as $direction) {
+            $dirRow = $direction[0];
+            $dirCol = $direction[1];
+            $positionsTrouvees = true;
+
+            for ($i = 0; $i < $longueur; $i++) {
+                $checkRow = $row + $dirRow * $i;
+                $checkCol = $col + $dirCol * $i;
+
+                if (!$this->validerPosition($checkRow, $checkCol) || $tableProbabilite[$checkRow][$checkCol] !== -2) {
+                    $positionsTrouvees = false;
+                    break;
+                }
+            }
+
+            if ($positionsTrouvees) {
+                for ($i = 0; $i < $longueur; $i++) {
+                    $tableProbabilite[$row + $dirRow * $i][$col + $dirCol * $i] = -1;
+                }
             }
         }
+    }
+
+    private function validerPosition(int $row, int $col): bool {
+        return $row >= 0 && $row < 10 && $col >= 0 && $col < 10;
     }
 }
