@@ -50,28 +50,38 @@ class Missile extends Model
 
         $this->calculateBateauxConfigurations($tableProbabilite, $bateaux, $TAILLE_TABLEAU);
 
-        // TODO: A desactiver si bateaux couler?
-        //$this->boostProbabiliteAdjacentHit($tableProbabilite, $TAILLE_TABLEAU);
-
         return $this->trouverPlusProbable($tableProbabilite, $TAILLE_TABLEAU);
     }
 
     private function calculateBateauxConfigurations(array &$tableProbabilite, array $bateaux, int $taille_tableau): void
     {
         foreach ($bateaux as $bateau => $longueur) {
-            for ($i = 0; $i < $taille_tableau; $i++) {
-                for ($j = 0; $j < $taille_tableau; $j++) {
-                    for ($estHorizontal = 0; $estHorizontal < 2; $estHorizontal++) {
-                        if ($this->placable($i, $j, $longueur, $estHorizontal, $tableProbabilite)) {
-                            $boost = $this->overlappedHit($i, $j, $longueur, $estHorizontal, $tableProbabilite);
-                            for ($k = 0; $k < $longueur; $k++) {
-                                // TODO Ya un stupid bug.. rajoute + 1 une fois random
-                                if ($tableProbabilite[$estHorizontal ? $i : $i + $k][$estHorizontal ? $j + $k : $j] >= 0)
-                                    $tableProbabilite[$estHorizontal ? $i : $i + $k][$estHorizontal ? $j + $k : $j] += $boost;
-                            }
-                        }
-                    }
-                }
+           $this->passerDansLesCase($tableProbabilite, $longueur, $taille_tableau);
+        }
+    }
+
+    private function passerDansLesCase(array &$tableProbabilite, int $longueurBateau, int $taille_tableau): void {
+        for ($i = 0; $i < $taille_tableau; $i++) {
+            for ($j = 0; $j < $taille_tableau; $j++) {
+                $this->changerOrientationBateau($i, $j, $longueurBateau, $tableProbabilite);
+            }
+        }
+    }
+
+    private function changerOrientationBateau(int $row, int $col, int $longueurBateau, array &$tableProbabilite): void
+    {
+        for ($estHorizontal = 0; $estHorizontal < 2; $estHorizontal++) {
+            $this->siPlacablePlacer($row, $col,$longueurBateau, $tableProbabilite, $estHorizontal);
+        }
+    }
+
+    private function siPlacablePlacer(int $row, int $col, int $longueurBateau, array &$tableProbabilite, bool $estHorizontal): void
+    {
+        if ($this->placable($row, $col, $longueurBateau, $estHorizontal, $tableProbabilite)) {
+            $boost = $this->overlappedHit($row, $col, $longueurBateau, $estHorizontal, $tableProbabilite);
+            for ($k = 0; $k < $longueurBateau; $k++) {
+                if ($tableProbabilite[$estHorizontal ? $row : $row + $k][$estHorizontal ? $col + $k : $col] >= 0)
+                    $tableProbabilite[$estHorizontal ? $row : $row + $k][$estHorizontal ? $col + $k : $col] += $boost;
             }
         }
     }
@@ -101,20 +111,6 @@ class Missile extends Model
                 $boost += 10;
         }
         return $boost;
-    }
-
-    private function boostProbabiliteAdjacentHit(array &$tableProbabilite, int $taille_tableau): void
-    {
-        for ($i = 0; $i < $taille_tableau; $i++) {
-            for ($j = 0; $j < $taille_tableau; $j++) {
-                if ($tableProbabilite[$i][$j] === -2) {
-                    $tableProbabilite[$i + 1][$j] *= 2;
-                    $tableProbabilite[$i][$j + 1] *= 2;
-                    $tableProbabilite[$i - 1][$j] *= 2;
-                    $tableProbabilite[$i][$j - 1] *= 2;
-                }
-            }
-        }
     }
 
     private function trouverPlusProbable(array $tableProbabilite, int $taille_tableau): string
