@@ -4,9 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\MissileRequest;
 use App\Http\Resources\MissileResource;
+use App\Logique\ProbabilityMap;
 use App\Models\Missile;
 use App\Models\Partie;
-use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
@@ -16,7 +17,12 @@ class MissileController extends Controller
     {
         Gate::denyIf($partie->user_id !== Auth::id(), 'Cette action n’est pas autorisée.');
 
-        $missile = (new Missile())->createMissile($partie);
+        $probabilityMap = new ProbabilityMap($partie);
+        $missile = new Missile();
+        $missile->coordonnee = $probabilityMap->calculateProbabilities();
+        $missile->resultat = null;
+        $missile->partie_id = $partie->id;
+        $missile->save();
 
         return new MissileResource($missile);
     }

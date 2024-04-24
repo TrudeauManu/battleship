@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Requests\PartieRequest;
 use App\Http\Resources\PartieCollection;
 use App\Http\Resources\PartieResource;
+use App\Logique\AlgoPlacerBateaux;
 use App\Models\Bateau;
 use App\Models\Partie;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
@@ -32,8 +34,8 @@ class PartieController extends Controller
         $partie->user_id = auth()->user()->id;
         $partie->save();
 
+        $bateaux = AlgoPlacerBateaux::placerBateaux();
         $setBateaux = new Bateau();
-        $bateaux = $setBateaux->placerBateaux();
         $setBateaux->positions_porte_avions = $bateaux['porte-avions'];
         $setBateaux->positions_cuirasse = $bateaux['cuirasse'];
         $setBateaux->positions_destroyer = $bateaux['destroyer'];
