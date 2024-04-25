@@ -105,9 +105,9 @@ class Missile extends Model
     {
         $boost = 1;
         for ($i = 0; $i < $longueur; $i++) {
-            if ($estHorizontal && $col + $i + 1 < 10 && $tableProbabilite[$row][$col + $i] && $tableProbabilite[$row][$col + $i + 1] === -2)
+            if ($estHorizontal && $tableProbabilite[$row][$col + $i] === -2 && $col + $i + 1 < 10 && $col + $i - 1 >= 0 && ($tableProbabilite[$row][$col + $i + 1] === -2 || $tableProbabilite[$row][$col + $i - 1] === -2))
                 $boost += 20;
-            if (!$estHorizontal && $row + $i + 1 < 10 && $tableProbabilite[$row + $i][$col] === -2 && $tableProbabilite[$row + $i + 1][$col] === -2)
+            if (!$estHorizontal && $tableProbabilite[$row + $i][$col] === -2 && $row + $i + 1 < 10 && $row + $i - 1 >= 0 && ($tableProbabilite[$row + $i + 1][$col] === -2 || $tableProbabilite[$row + $i - 1][$col] === -2 ))
                 $boost += 20;
             if ($estHorizontal && $tableProbabilite[$row][$col + $i] === -2)
                 $boost += 10;
