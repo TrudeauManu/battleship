@@ -2,7 +2,6 @@
 
 namespace App\Logique;
 
-use App\Models\Missile;
 use App\Models\Partie;
 
 class ProbabilityMap

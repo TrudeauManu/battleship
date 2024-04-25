@@ -7,7 +7,6 @@ use App\Http\Resources\MissileResource;
 use App\Logique\ProbabilityMap;
 use App\Models\Missile;
 use App\Models\Partie;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
