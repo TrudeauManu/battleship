@@ -15,16 +15,6 @@ use Illuminate\Support\Facades\Gate;
 class PartieController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
-     * TODO: pomal sur faut l'enlever
-     */
-    public function index(): PartieCollection
-    {
-        return new PartieCollection(Partie::all());
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(PartieRequest $request): PartieResource
@@ -45,16 +35,6 @@ class PartieController extends Controller
         $setBateaux->partie_id = $partie->id;
         $setBateaux->save();
 
-        return new PartieResource($partie);
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * TODO: avoir si on garde
-     */
-    public function show(Partie $partie): PartieResource
-    {
         return new PartieResource($partie);
     }
 
