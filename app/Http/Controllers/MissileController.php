@@ -11,11 +11,23 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
+/**
+ * Controller des méthodes des missiles.
+ *
+ * @author Emmanuel Trudeau & Marc-Alexandre Bouchard.
+ */
 class MissileController extends Controller
 {
-    public function shoot(MissileRequest $request, Partie $partie): MissileResource
+    /**
+     * Méthode store d'un missile qui crée un missile.
+     *
+     * @param MissileRequest $request La requête.
+     * @param Partie $partie La partie dans laquelle le missile est créer.
+     * @return MissileResource Le missile créer.
+     */
+    public function store(MissileRequest $request, Partie $partie): MissileResource
     {
-        Gate::denyIf($partie->user_id !== Auth::id(), 'Cette action n’est pas autorisée.');
+        Gate::denyIf($partie->user_id !== Auth::id(), "Cette action n’est pas autorisée.");
 
         $probabilityMap = new ProbabilityMap($partie);
         $coordonnee = $probabilityMap->calculateProbabilityMap();
@@ -29,13 +41,21 @@ class MissileController extends Controller
         return new MissileResource($missile);
     }
 
-    public function updateMissile(MissileRequest $request, Partie $partie, string $coordonnee): MissileResource
+    /**
+     * Méthode put d'un missile qui update le résultat d'un missile lancer.
+     *
+     * @param MissileRequest $request La requête.
+     * @param Partie $partie La partie dans laquelle le missile à été créer.
+     * @param string $coordonnee La coordonnée du missile à updater.
+     * @return MissileResource Le missile updater.
+     */
+    public function update(MissileRequest $request, Partie $partie, string $coordonnee): MissileResource
     {
         $missile = Missile::where([
             ['coordonnee', $coordonnee],
             ['partie_id', $partie->id]])->firstOrFail();
 
-        Gate::denyIf($partie->user_id !== Auth::id(), 'Cette action n’est pas autorisée.');
+        Gate::denyIf($partie->user_id !== Auth::id(), "Cette action n’est pas autorisée.");
 
         $request->validate([
             'resultat' => 'required'

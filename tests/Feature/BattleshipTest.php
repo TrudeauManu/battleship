@@ -3,9 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
@@ -18,8 +16,7 @@ use Throwable;
  */
 class BattleshipTest extends TestCase
 {
-    use DatabaseMigrations;
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     /** @var User $user1 Usager principal. */
     private User $user1;
@@ -37,6 +34,8 @@ class BattleshipTest extends TestCase
         parent::setUp();
         $this->user1 = User::factory()->create();
         $this->user2 = User::factory()->create();
+
+        $this->seed();
     }
 
     /**
@@ -65,7 +64,6 @@ class BattleshipTest extends TestCase
             ->assertStatus(201)
             ->assertJsonPath('data.adversaire', 'SuperAdversaire');
         $this->validerJSONPartie($response);
-
 
         $idPartie = $response->decodeResponseJson()['data']['id'];
 
@@ -153,7 +151,6 @@ class BattleshipTest extends TestCase
         $response
             ->assertStatus($code)
             ->assertJsonPath('message', $message);
-
     }
 
     /**
@@ -210,6 +207,7 @@ class BattleshipTest extends TestCase
 
         $response = $this->actingAs($this->user1)->postJson("/battleship-ia/parties/$idPartie/missiles");
         $missile = $response->decodeResponseJson()['data']['coordonnee'];
+
         $response = $this->actingAs($this->user1)->putJson("/battleship-ia/parties/$idPartie/missiles/$missile", ['resultat' => '']);
         $response
             ->assertStatus($code)
@@ -219,7 +217,6 @@ class BattleshipTest extends TestCase
         $response
             ->assertStatus($code)
             ->assertJsonPath('message', 'Le champ resultat est invalide.');
-
     }
 
     /**
@@ -233,17 +230,17 @@ class BattleshipTest extends TestCase
         $response
             ->assertJson(fn(AssertableJson $json) =>
                 $json->whereAllType([
-                    'data.id' => 'integer',
-                    'data.adversaire' => 'string',
-                    'data.bateaux' => 'array',
-                    'data.bateaux.porte-avions' => 'array',
-                    'data.bateaux.cuirasse' => 'array',
-                    'data.bateaux.destroyer' => 'array',
-                    'data.bateaux.sous-marin' => 'array',
-                    'data.bateaux.patrouilleur' => 'array',
-                    'data.created_at' => 'string',
-                ])->missing('message')
-            )
+                        'data.id' => 'integer',
+                        'data.adversaire' => 'string',
+                        'data.bateaux' => 'array',
+                        'data.bateaux.porte-avions' => 'array',
+                        'data.bateaux.cuirasse' => 'array',
+                        'data.bateaux.destroyer' => 'array',
+                        'data.bateaux.sous-marin' => 'array',
+                        'data.bateaux.patrouilleur' => 'array',
+                        'data.created_at' => 'string',
+                    ])->missing('message')
+                )
             ->assertJsonPath('data.bateaux.porte-avions', fn ($coordonnees) => count($coordonnees) == 5)
             ->assertJsonPath('data.bateaux.cuirasse', fn ($coordonnees) => count($coordonnees) == 4)
             ->assertJsonPath('data.bateaux.destroyer', fn ($coordonnees) => count($coordonnees) == 3)

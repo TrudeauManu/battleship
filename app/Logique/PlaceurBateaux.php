@@ -2,12 +2,21 @@
 
 namespace App\Logique;
 
+/**
+ * Classe de placeur de bateaux.
+ *
+ * @author Emmanuel Trudeau & Marc-Alexandre Bouchard.
+ */
 class PlaceurBateaux
 {
     private int $taille_tableau;
     private array $bateaux_longueur;
     private array $tableau;
     private array $bateaux;
+
+    /**
+     * Constructeur.
+     */
     public function __construct()
     {
         $this->taille_tableau = 10;
@@ -30,6 +39,11 @@ class PlaceurBateaux
         ];
     }
 
+    /**
+     * Fonction qui place les bateaux à des positions au hasard.
+     *
+     * @return array[] Les positions des bateaux.
+     */
     public function placerBateaux(): array {
         foreach ($this->bateaux_longueur as $bateau => $longueur) {
             $placer = false;
@@ -53,7 +67,17 @@ class PlaceurBateaux
         return $this->bateaux;
     }
 
-    private function overlappedOrNextTo($row, $col, $longueur, $estHorizontal): bool {
+    /**
+     * Fonction qui vérifie que le bateau n'overlap pas d'autre bateau et qu'il n'est pas directement à côter d'un
+     * autre bateau déja placer.
+     *
+     * @param int $row La rangée de la case du bateau.
+     * @param int $col La colonne de la case du bateau.
+     * @param int $longueur La longueur du bateau.
+     * @param bool $estHorizontal L'orientation du bateau.
+     * @return bool Si le bateau est placable.
+     */
+    private function overlappedOrNextTo(int $row, int $col, int $longueur, bool $estHorizontal): bool {
         for ($i = 0; $i < $longueur; $i++) {
 
             if ($estHorizontal) {
@@ -81,6 +105,28 @@ class PlaceurBateaux
         return false;
     }
 
+    /**
+     * Fonction qui place le bateau et ajoute ses coordonnées dans l'array bateaux.
+     *
+     * @param int $row La rangée de la case du bateau.
+     * @param int $col La colonne de la case du bateau.
+     * @param int $longueur La longueur du bateau.
+     * @param bool $estHorizontal L'orientation du bateau.
+     * @param string $bateau Le nom du bateau.
+     * @return void
+     */
+    private function placer(int $row, int $col, int $longueur, bool $estHorizontal, string $bateau): void {
+        for ($i = 0; $i < $longueur; $i++) {
+            $this->tableau[$estHorizontal ? $row : $row + $i][$estHorizontal ? $col + $i : $col] = 1;
+            $this->bateaux[$bateau][] = chr(65 + ($estHorizontal ? $row : $row + $i)) . "-" . ($col + 1 + ($estHorizontal ? $i : 0));
+        }
+    }
+
+    /**
+     * Fonction qui place les bateaux en s'assurant qu'ils touchent au minimum un côté.
+     *
+     * @return array[] Les positions des bateaux.
+     */
     public function placerBateauxCote(): array {
         foreach ($this->bateaux_longueur as $bateau => $longueur) {
             $placer = false;
@@ -104,10 +150,5 @@ class PlaceurBateaux
         return $this->bateaux;
     }
 
-    private function placer(int $row, int $col, int $longueur, bool $estHorizontal, string $bateau): void {
-        for ($i = 0; $i < $longueur; $i++) {
-            $this->tableau[$estHorizontal ? $row : $row + $i][$estHorizontal ? $col + $i : $col] = 1;
-            $this->bateaux[$bateau][] = chr(65 + ($estHorizontal ? $row : $row + $i)) . "-" . ($col + 1 + ($estHorizontal ? $i : 0));
-        }
-    }
+
 }

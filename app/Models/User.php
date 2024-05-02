@@ -46,6 +46,11 @@ class User extends Authenticatable
         ];
     }
 
+    /**
+     * Get les parties du user.
+     *
+     * @return HasMany
+     */
     public function parties(): HasMany
     {
         return $this->hasMany(Partie::class);

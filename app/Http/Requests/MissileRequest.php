@@ -4,6 +4,11 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * Request de missile.
+ *
+ * @author Emmanuel Trudeau & Marc-Alexandre Bouchard.
+ */
 class MissileRequest extends FormRequest
 {
     /**

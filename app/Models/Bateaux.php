@@ -7,12 +7,22 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Bateau extends Model
+/**
+ * Modèle d'un set de bateaux.
+ *
+ * @author Emmanuel Trudeau & Marc-Alexandre Bouchard.
+ */
+class Bateaux extends Model
 {
     use HasFactory;
 
     protected $table = 'bateaux';
 
+    /**
+     * Get les attributs qui doivent être cast.
+     *
+     * @return string[]
+     */
     protected function casts(): array
     {
         return [
@@ -24,6 +34,11 @@ class Bateau extends Model
         ];
     }
 
+    /**
+     * Get la partie dans laquelle le set de bateaux à été créer.
+     *
+     * @return BelongsTo
+     */
     public function partie(): BelongsTo
     {
         return $this->belongsTo(Partie::class);

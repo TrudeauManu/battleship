@@ -4,6 +4,11 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * Request de partie.
+ *
+ * @author Emmanuel Trudeau & Marc-Alexandre Bouchard.
+ */
 class PartieRequest extends FormRequest
 {
     /**

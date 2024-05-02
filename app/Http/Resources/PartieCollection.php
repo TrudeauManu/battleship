@@ -5,6 +5,11 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
+/**
+ * Collection de parties.
+ *
+ * @author Emmanuel Trudeau & Marc-Alexandre Bouchard.
+ */
 class PartieCollection extends ResourceCollection
 {
     /**

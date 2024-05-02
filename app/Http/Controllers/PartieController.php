@@ -3,15 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PartieRequest;
-use App\Http\Resources\PartieCollection;
 use App\Http\Resources\PartieResource;
 use App\Logique\PlaceurBateaux;
-use App\Models\Bateau;
+use App\Models\Bateaux;
 use App\Models\Partie;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
+/**
+ * Controller de partie.
+ *
+ * @author Emmanuel Trudeau & Marc-Alexandre Bouchard.
+ */
 class PartieController extends Controller
 {
     /**
@@ -26,7 +30,7 @@ class PartieController extends Controller
 
         $placeurBateaux = new PlaceurBateaux();
         $bateaux = $placeurBateaux->placerBateaux();
-        $setBateaux = new Bateau();
+        $setBateaux = new Bateaux();
         $setBateaux->positions_porte_avions = $bateaux['porte-avions'];
         $setBateaux->positions_cuirasse = $bateaux['cuirasse'];
         $setBateaux->positions_destroyer = $bateaux['destroyer'];
@@ -43,7 +47,7 @@ class PartieController extends Controller
      */
     public function destroy(Partie $partie): PartieResource
     {
-        Gate::denyIf($partie->user_id !== Auth::id(), 'Cette action n’est pas autorisée.');
+        Gate::denyIf($partie->user_id !== Auth::id(), "Cette action n’est pas autorisée.");
 
         $bateaux = $partie->bateaux;
         $partie->delete();
