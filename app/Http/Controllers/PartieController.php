@@ -29,7 +29,15 @@ class PartieController extends Controller
         $partie->save();
 
         $placeurBateaux = new PlaceurBateaux();
+
         $bateaux = $placeurBateaux->placerBateaux();
+//        $estCoter = rand(0, 1) >= 0.8;
+//        if ($estCoter) {
+//            $bateaux = $placeurBateaux->placerBateauxCote();
+//        } else {
+//            $bateaux = $placeurBateaux->placerBateaux();
+//        }
+
         $setBateaux = new Bateaux();
         $setBateaux->positions_porte_avions = $bateaux['porte-avions'];
         $setBateaux->positions_cuirasse = $bateaux['cuirasse'];

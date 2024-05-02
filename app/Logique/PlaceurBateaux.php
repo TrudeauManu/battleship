@@ -88,7 +88,7 @@ class PlaceurBateaux
                     ($col + $i < count($this->tableau[0]) - 1 && $this->tableau[$row][$col + $i + 1] === 1)) {
                     return true;
                 }
-                if ($longueur === 2 && ($col + $i >= 3 && $col + $i <= 6) && ($row >= 3 && $row <= 6))
+                if (($col + $i >= 3 && $col + $i <= 6) && ($row >= 3 && $row <= 6))
                     return true;
             } else {
                 if ($this->tableau[$row + $i][$col] === 1 ||
@@ -134,9 +134,9 @@ class PlaceurBateaux
             while (!$placer) {
                 if ($estHorizontal) {
                     $row = rand(0, $this->taille_tableau - 1);
-                    $col = (rand(0, 1) === 0) ? 0 : $this->taille_tableau - $longueur;
+                    $col = (rand(0, 1) <= 0.5) ? 0 : $this->taille_tableau - $longueur;
                 } else {
-                    $row = (rand(0, 1) === 0) ? 0 : $this->taille_tableau - $longueur;
+                    $row = (rand(0, 1) <= 0.5) ? 0 : $this->taille_tableau - $longueur;
                     $col = rand(0, $this->taille_tableau - 1);
                 }
 
@@ -149,6 +149,4 @@ class PlaceurBateaux
 
         return $this->bateaux;
     }
-
-
 }
