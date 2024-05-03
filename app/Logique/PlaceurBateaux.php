@@ -88,7 +88,7 @@ class PlaceurBateaux
                     ($col + $i < count($this->tableau[0]) - 1 && $this->tableau[$row][$col + $i + 1] === 1)) {
                     return true;
                 }
-                if (($col + $i >= 3 && $col + $i <= 6) && ($row >= 3 && $row <= 6))
+                if ($longueur <= 3 && (($col + $i >= 3 && $col + $i <= 6) && ($row >= 3 && $row <= 6)))
                     return true;
             } else {
                 if ($this->tableau[$row + $i][$col] === 1 ||
@@ -130,14 +130,14 @@ class PlaceurBateaux
     public function placerBateauxCote(): array {
         foreach ($this->bateaux_longueur as $bateau => $longueur) {
             $placer = false;
-            $estHorizontal = rand(0,1);
             while (!$placer) {
+                $estHorizontal = rand(0,1);
                 if ($estHorizontal) {
-                    $row = rand(0, $this->taille_tableau - 1);
-                    $col = (rand(0, 1) <= 0.5) ? 0 : $this->taille_tableau - $longueur;
+                    $row = (rand(0, 1) <= 0.5 ? 0 : $this->taille_tableau - 1);
+                    $col = rand(0, $this->taille_tableau - $longueur);
                 } else {
-                    $row = (rand(0, 1) <= 0.5) ? 0 : $this->taille_tableau - $longueur;
-                    $col = rand(0, $this->taille_tableau - 1);
+                    $row = rand(0, $this->taille_tableau - $longueur);
+                    $col = (rand(0, 1) <= 0.5 ? 0 : $this->taille_tableau - 1);
                 }
 
                 $placer = !$this->overlappedOrNextTo($row, $col, $longueur, $estHorizontal);

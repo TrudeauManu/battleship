@@ -30,13 +30,12 @@ class PartieController extends Controller
 
         $placeurBateaux = new PlaceurBateaux();
 
-        $bateaux = $placeurBateaux->placerBateaux();
-//        $estCoter = rand(0, 1) >= 0.8;
-//        if ($estCoter) {
-//            $bateaux = $placeurBateaux->placerBateauxCote();
-//        } else {
-//            $bateaux = $placeurBateaux->placerBateaux();
-//        }
+        $estCoter = rand(0, 1) >= 0.8;
+        if ($estCoter) {
+            $bateaux = $placeurBateaux->placerBateauxCote();
+        } else {
+            $bateaux = $placeurBateaux->placerBateaux();
+        }
 
         $setBateaux = new Bateaux();
         $setBateaux->positions_porte_avions = $bateaux['porte-avions'];
