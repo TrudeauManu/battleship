@@ -3,7 +3,7 @@
 namespace App\Logique;
 
 /**
- * Classe de placeur de bateaux.
+ * Contient les informations et l'alogrithme pour placer des bateaux.
  *
  * @author Emmanuel Trudeau & Marc-Alexandre Bouchard.
  */

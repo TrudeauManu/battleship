@@ -13,7 +13,7 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 class BateauCollection extends ResourceCollection
 {
     /**
-     * Transform the resource collection into an array.
+     * Transforme la resource collection en un array.
      *
      * @return array<int|string, mixed>
      */

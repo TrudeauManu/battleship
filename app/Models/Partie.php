@@ -20,7 +20,7 @@ class Partie extends Model
     protected $fillable = ['adversaire'];
 
     /**
-     * Get les missiles de la partie.
+     * Retourne les missiles de la partie.
      *
      * @return HasMany
      */
@@ -30,7 +30,7 @@ class Partie extends Model
     }
 
     /**
-     * Get les bateaux de la partie.
+     * Retourne les bateaux de la partie.
      *
      * @return HasOne
      */
@@ -40,7 +40,7 @@ class Partie extends Model
     }
 
     /**
-     * Get le user de la partie.
+     * Retourne le user de la partie.
      *
      * @return BelongsTo
      */

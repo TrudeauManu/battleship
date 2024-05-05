@@ -13,7 +13,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class PartieResource extends JsonResource
 {
     /**
-     * Transform the resource into an array.
+     * Transforme la resource en un array.
      *
      * @return array<string, mixed>
      */

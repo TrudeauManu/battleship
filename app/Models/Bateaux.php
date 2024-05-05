@@ -19,7 +19,7 @@ class Bateaux extends Model
     protected $table = 'bateaux';
 
     /**
-     * Get les attributs qui doivent être cast.
+     * Retourne les attributs qui doivent être cast.
      *
      * @return string[]
      */
@@ -35,7 +35,7 @@ class Bateaux extends Model
     }
 
     /**
-     * Get la partie dans laquelle le set de bateaux à été créer.
+     * Retourne la partie dans laquelle le set de bateaux à été créer.
      *
      * @return BelongsTo
      */

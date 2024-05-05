@@ -12,16 +12,16 @@ use Illuminate\Foundation\Http\FormRequest;
 class PartieRequest extends FormRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
-     */
+     * Determine si l'utilisateur est autorisé à faire la requête.
+    */
     public function authorize(): bool
     {
         return true;
     }
 
     /**
-     * Get the validation rules that apply to the request.
-     *
+     * Retourne les règles de validation qui s'applique à la requête.
+ *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array

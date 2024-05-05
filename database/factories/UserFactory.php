@@ -7,17 +7,19 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 /**
+ * Factory d'utilisateur.
+ *
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
  */
 class UserFactory extends Factory
 {
     /**
-     * The current password being used by the factory.
+     * Le mot de passe actuel utilisé par la factory.
      */
     protected static ?string $password;
 
     /**
-     * Define the model's default state.
+     * Défini l'état par défault du monde.
      *
      * @return array<string, mixed>
      */
@@ -33,7 +35,7 @@ class UserFactory extends Factory
     }
 
     /**
-     * Indicate that the model's email address should be unverified.
+     * Indique si l'adresse email du model doit être non vérifié.
      */
     public function unverified(): static
     {

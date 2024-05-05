@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Gate;
 class PartieController extends Controller
 {
     /**
-     * Store a newly created resource in storage.
+     * Méthode store qui crée une nouvelle partie.
      */
     public function store(PartieRequest $request): PartieResource
     {
@@ -30,12 +30,8 @@ class PartieController extends Controller
 
         $placeurBateaux = new PlaceurBateaux();
 
-        $estCoter = rand(0, 1) >= 0.8;
-        if ($estCoter) {
-            $bateaux = $placeurBateaux->placerBateauxCote();
-        } else {
-            $bateaux = $placeurBateaux->placerBateaux();
-        }
+        $bateaux = rand(0, 100) >= 66 ? $placeurBateaux->placerBateauxCote()
+                                      : $placeurBateaux->placerBateaux();
 
         $setBateaux = new Bateaux();
         $setBateaux->positions_porte_avions = $bateaux['porte-avions'];
@@ -50,11 +46,11 @@ class PartieController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Méthode destroy qui supprime la partie de la base de données.
      */
     public function destroy(Partie $partie): PartieResource
     {
-        Gate::denyIf($partie->user_id !== Auth::id(), "Cette action n’est pas autorisée.");
+        Gate::authorize('delete', $partie);
 
         $bateaux = $partie->bateaux;
         $partie->delete();

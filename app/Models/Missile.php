@@ -20,7 +20,7 @@ class Missile extends Model
     protected $fillable = ['resultat'];
 
     /**
-     * Get la partie dans laquelle le missile à été créer.
+     * Retourne la partie dans laquelle le missile à été créer.
      *
      * @return BelongsTo
      */

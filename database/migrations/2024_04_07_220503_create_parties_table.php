@@ -7,8 +7,8 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
-     */
+     * Exécute les migrations.
+     * */
     public function up(): void
     {
         Schema::create('parties', function (Blueprint $table) {
@@ -22,7 +22,7 @@ return new class extends Migration
     }
 
     /**
-     * Reverse the migrations.
+     * Renverse les migrations.
      */
     public function down(): void
     {

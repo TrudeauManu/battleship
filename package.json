@@ -1,6 +1,7 @@
 {
     "private": true,
     "type": "module",
+    "author": "Emmanuel Trudeau & Marc-Alexandre Bouchard",
     "scripts": {
         "dev": "vite",
         "build": "vite build"

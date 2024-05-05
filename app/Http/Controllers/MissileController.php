@@ -27,7 +27,7 @@ class MissileController extends Controller
      */
     public function store(MissileRequest $request, Partie $partie): MissileResource
     {
-        Gate::denyIf($partie->user_id !== Auth::id(), "Cette action n’est pas autorisée.");
+        Gate::authorize('create', $partie);
 
         $probabilityMap = new ProbabilityMap($partie);
         $coordonnee = $probabilityMap->calculateProbabilityMap();
@@ -55,7 +55,7 @@ class MissileController extends Controller
             ['coordonnee', $coordonnee],
             ['partie_id', $partie->id]])->firstOrFail();
 
-        Gate::denyIf($partie->user_id !== Auth::id(), "Cette action n’est pas autorisée.");
+        Gate::authorize('update', $partie);
 
         $request->validate([
             'resultat' => 'required'

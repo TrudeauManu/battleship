@@ -12,7 +12,7 @@ use Illuminate\Foundation\Http\FormRequest;
 class MissileRequest extends FormRequest
 {
     /**
-     * Determine if the user is authorized to make this request.
+     * Determine si l'utilisateur est autoriser à faire la requête.
      */
     public function authorize(): bool
     {
@@ -20,7 +20,7 @@ class MissileRequest extends FormRequest
     }
 
     /**
-     * Get the validation rules that apply to the request.
+     * Retourne les règles de validation qui s'applique à la requête.
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */

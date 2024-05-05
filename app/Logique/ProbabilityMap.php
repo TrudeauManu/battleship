@@ -5,7 +5,7 @@ namespace App\Logique;
 use App\Models\Partie;
 
 /**
- * Classe de Map de probabilité.
+ * Contient les informations et l'algorithme de recherche de la Map de probabilité.
  *
  * @author Emmanuel Trudeau & Marc-Alexandre Bouchard.
  */
